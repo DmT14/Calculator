@@ -1,0 +1,138 @@
+body {
+	background-image: url(background.png);
+}
+
+sub, sup {
+	font-size: 25px;
+}
+
+#calc {
+	border: 2px solid black;
+	border-spacing: 10px;
+	margin-top: 170px;
+	width: 698px;
+	height: 470px;
+	table-layout: fixed;
+	background-color: #babbd1;
+}
+
+#calc td {
+	border: 1px solid black;
+	padding: 10px;
+	text-align: center;
+	font-size: 30px;
+	border-radius: 15px;
+	width: 70px;
+	user-select: none;
+}
+
+#calc td:hover {
+	cursor: pointer;
+	user-select: none;
+}
+
+#calc #result {
+	text-align: right;
+	width: 600px;
+	height: 65px;
+	font-size: 46px;
+	background-color: white;
+	cursor: default;
+	user-select: text;
+}
+
+#calc td.oper {
+	background-color: #f5c05d;
+}
+
+#calc td.oper:hover {
+	background-color: #7f77a8;
+}
+
+#calc td.extra-oper {
+	background-color: #e8e8e8;
+}
+
+#calc td.extra-oper:hover {
+	background-color: #7f77a8;
+}
+
+#calc td.number {
+	font-size: 35px;
+}
+
+#calc td.number:hover {
+	background-color: #fcffa6;
+}
+
+#calc td.extras {
+	font-size: 25px;
+}
+
+#calc td.extras sub, #calc td.extras sup {
+	font-size: 15px;
+}
+
+#calc td#negative, #calc td#point {
+	background-color: #babbd1;
+}
+
+#calc td#negative:hover, #calc td#point:hover {
+	background-color: #7f77a8;
+}
+
+#logarythm {
+	text-align: center;
+	width: 600px;
+	margin: 0 auto;
+	margin-top: 80px;
+	padding: 10px;
+	background-color: #b7c7c6;
+}
+
+#logarythm span {
+	font-size: 40px;
+	vertical-align: bottom;
+}
+
+#logarythm #basis {
+	width: 30px;
+	height: 20px;
+	vertical-align: bottom;
+	font-family: 'Times New Roman';
+	font-size: 20px;
+}
+
+#logarythm #num, #logarythm #resLog {
+	width: 200px;
+	height: 35px;
+	font-family: 'Times New Roman';
+	font-size: 35px;
+}
+
+#logarythm #getLog {
+	margin-top: 10px;
+	width: 100px;
+	height: 30px;
+	border-radius: 10px;
+	font-family: ''Times New Roman'';
+	font-size: 17px;
+	cursor: pointer;
+	outline: none;
+}
+
+div#footer {
+	background: #97c0C4;
+	padding-top: 5px;
+	padding-bottom: 10px;
+    text-align: right;
+	padding-right: 25px;
+    padding-left: 25px;
+    bottom: 0;
+    right: 0;
+    position: absolute;
+}
+
+div#footer a:visited {
+	color: #965d39;
+}

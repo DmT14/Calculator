@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Калькулятор</title>
+	<meta charset="utf-8">
+	<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+	<table id="calc" align="center">
+		<tr>
+			<td colspan="7" id="result">0</td>
+		</tr>
+
+		<tr>
+			<td class="extra-oper" id="opposite"><sup>1</sup><i>/<sub>x</sub></i></td>
+			<td class="extra-oper" id="squareRoot"><img src="sqr_root.png" width="30"></td>
+			<td class="extra-oper" id="pi">&pi;</td>
+			<td class="extra-oper" id="clear" colspan="3" style="font-size: 35px;">C</td>
+			<td class="oper" id="divide">&divide;</td>
+		</tr>
+
+		<tr>
+			<td class="extra-oper extras" id="sinus">sin <i>x</i></td>
+			<td class="extra-oper extras" id="square"><i>x</i><sup>2</sup></td>
+			<td class="extra-oper extras" id="mod">mod</td>
+			<td class="number">7</td>
+			<td class="number">8</td>
+			<td class="number">9</td>
+			<td class="oper" id="multiply">&times;</td>
+		</tr>
+
+		<tr>
+			<td class="extra-oper extras" id="cosinus">cos <i>x</i></td>
+			<td class="extra-oper extras" id="cube"><i>x</i><sup>3</sup></td>
+			<td class="extra-oper extras" id="ln">ln</td>
+			<td class="number">4</td>
+			<td class="number">5</td>
+			<td class="number">6</td>
+			<td class="oper" id="subtract">&minus;</td>
+		</tr>
+		<tr>
+
+			<td class="extra-oper extras" id="tan">tg <i>x</i></td>
+			<td class="extra-oper extras" id="degree"><i>x</i><sup>y</sup></td>
+			<td class="extra-oper extras" id="factorial"><i>x</i>!</td>
+			<td class="number">1</td>
+			<td class="number">2</td>
+			<td class="number">3</td>
+			<td class="oper" id="add">+</td>
+		</tr>
+
+		<tr>
+			<td class="extra-oper extras" id="ctg">ctg <i>x</i></td>
+			<td class="extra-oper extras" id="yroot"><img src="y_root.png" width="30"></td>
+			<td class="extra-oper extras" id="exp">e</td>
+			<td class="number">0</td>
+			<td class="extra-oper" id="negative">&plusmn;</td>
+			<td class="extra-oper" id="point">.</td>
+			<td class="oper" id="res">=</td>
+		</tr>
+	</table>
+
+	<div id="logarythm">
+		<span>
+			log <input type="text" id="basis"> <input type="text" id="num"> = <input style="margin-top: 10px;" type="text" id="resLog" readonly>
+		</span>
+		<br>
+		<input align="center" type="submit" value="Посчитать" id="getLog">
+		<br>
+		(дробная часть выделяется <i>точкой</i>)
+	</div>
+
+	<div id="footer">
+		&copy;&nbsp;Дмитрий Терентьев
+	</div>
+</body>
+
+<script type="text/javascript">
+	var calc = document.getElementById('calc');
+	var logarythm = document.getElementById('logarythm');
+
+	var basis = document.getElementById('basis');
+	var num = document.getElementById('num');
+	var resLog = document.getElementById('resLog');
+	var getLog = document.getElementById('getLog');
+
+	var result = document.getElementById('result');
+	
+	var opposite = document.getElementById('opposite');
+	var squareRoot = document.getElementById('squareRoot');
+	var pi = document.getElementById('pi');
+	var clear = document.getElementById('clear');
+	var divide = document.getElementById('divide');
+	
+	var sinus = document.getElementById('sinus');
+	var square = document.getElementById('square');
+	var mod = document.getElementById('mod');
+	var multiply = document.getElementById('multiply');
+
+	var cosinus = document.getElementById('cosinus');
+	var cube = document.getElementById('cube');
+	var ln = document.getElementById('ln');
+	var subtract = document.getElementById('subtract');
+
+	var tan = document.getElementById('tan');
+	var degree = document.getElementById('degree');
+	var factorial = document.getElementById('factorial');
+	var add = document.getElementById('add');
+
+	var ctg = document.getElementById('ctg');
+	var yroot = document.getElementById('yroot');
+	var exp = document.getElementById('exp');
+	var negative = document.getElementById('negative');
+	var point = document.getElementById('point');
+	var res = document.getElementById('res');
+	
+	var number = document.getElementsByClassName('number');
+	
+	var flagPlus, flagMinus, flagMultiply, flagDivide, flagDgr, flagRoot, flagMod;
+	var sum, minus, mult, dividing, dgr, y_root, modus;
+	var checkPlus, checkMinus, checkMultiply, checkDivide, checkDgr, checkRoot, checkMod;
+	var a, k = 0, r = 0;
+	var angleValue;
+	
+
+	Number.prototype.toRad = function () { return this * Math.PI / 180; }
+
+	for(var i = 0; i < number.length; i++) {
+		number[i].addEventListener('click', function () {
+			k++;
+			if(k >= 16) 
+				return false;
+			
+			if((result.innerHTML == '0') || r) {
+				result.innerHTML = '';
+				r = 0;
+			}
+			
+			if(checkPlus || checkMinus || checkMultiply || checkDivide || checkDgr || checkRoot) {
+				result.innerHTML = this.innerHTML;
+				checkPlus = 0; checkMinus = 0; checkMultiply = 0; checkDivide = 0; checkDgr = 0; checkRoot = 0;
+				
+			}
+			else {
+				result.innerHTML += this.innerHTML;
+			}
+		});
+	}
+
+	res.addEventListener('click', getResult);
+	function getResult() {
+		var checkingDgr = 0;
+		var checkingRoot = 0;
+
+		sum = parseFloat((Number(a) + Number(result.innerHTML)).toFixed(15));
+		minus = parseFloat((Number(a) - Number(result.innerHTML)).toFixed(15));
+		mult = Number(a) * Number(result.innerHTML);
+		dividing = Number(a) / Number(result.innerHTML);
+		
+		if((+a == 0 && +result.innerHTML > 0) || +a != 0)
+			dgr = Math.pow(Number(a), Number(result.innerHTML));
+		else 
+			checkingDgr = 1;
+		
+		if(a < 0 && (+result.innerHTML % 2 == 1 && +result.innerHTML >= 2))
+			y_root = -1 * (+Math.pow(Number(-a), 1 / (Number(result.innerHTML))).toFixed(14));
+		else if(a >= 0 && +result.innerHTML >= 2)
+			y_root = +Math.pow(Number(a), 1 / (Number(result.innerHTML))).toFixed(14);
+		else
+			checkingRoot = 1;
+
+		modus = Number(a) % Number(result.innerHTML);
+		
+		
+			if(flagPlus) {
+				if(isNaN(sum) || sum === Infinity || sum === -Infinity)
+					result.innerHTML = 'Ошибка!';
+				else
+					result.innerHTML = sum;
+				flagPlus = 0;
+			}
+
+			if(flagMinus) {
+				if(isNaN(minus) || minus === Infinity || minus === -Infinity)
+					result.innerHTML = 'Ошибка!';
+				else
+					result.innerHTML = minus;
+				flagMinus = 0;
+			}
+
+			if(flagMultiply) {
+				if(isNaN(mult) || mult === Infinity || mult === -Infinity)
+					result.innerHTML = 'Ошибка!';
+				else
+					result.innerHTML = mult;
+				flagMultiply = 0;
+			}
+
+			if(flagDivide) {
+				if(isNaN(dividing) || dividing === Infinity || dividing === -Infinity)
+					result.innerHTML = 'Ошибка!';
+				else
+					result.innerHTML = dividing;
+				flagDivide = 0;
+			}
+
+			if(flagDgr) {
+				if(isNaN(dgr) || dgr === Infinity || dgr === -Infinity || checkingDgr)
+					result.innerHTML = 'Ошибка!';
+				else
+					result.innerHTML = dgr;
+				flagDgr = 0;
+				checkingDgr = 0;
+			}
+
+			if(flagRoot) {
+				if(isNaN(y_root) || y_root === Infinity || y_root === -Infinity || checkingRoot)
+					result.innerHTML = 'Ошибка!';
+				else
+					result.innerHTML = y_root;
+				flagRoot = 0;
+				checkingRoot = 0;
+			}
+
+			if(flagMod) {
+				if(isNaN(modus) || modus === Infinity || modus === -Infinity)
+					result.innerHTML = 'Ошибка!';
+				else
+					result.innerHTML = modus;
+				flagMod = 0;
+			}
+			
+			r = 1;
+	}
+
+	add.addEventListener('click', function() {
+		getResult();
+		a = result.innerHTML;
+		flagPlus = 1;
+		checkPlus = 1;
+		k = 0;
+	});
+
+	subtract.addEventListener('click', function() {
+		getResult();
+		a = result.innerHTML;
+		flagMinus = 1;
+		checkMinus = 1;
+		k = 0;
+	});
+
+	multiply.addEventListener('click', function() {
+		getResult();
+		a = result.innerHTML;
+		flagMultiply = 1;
+		checkMultiply = 1;
+		k = 0;
+	});
+
+	divide.addEventListener('click', function() {
+		getResult();
+		a = result.innerHTML;
+		flagDivide = 1;
+		checkDivide = 1;
+		k = 0;
+	});
+
+	point.addEventListener('click', function() {
+		var value = result.innerHTML;
+		var array = value.split('');
+		var flag = 0;
+		for(var i = 0; i < array.length; i++) {
+			if(array[i] === '.')
+				flag = 1;
+		}
+		if(flag == 0)
+			result.innerHTML += '.';
+	});
+
+	negative.addEventListener('click', function() {
+		result.innerHTML = -result.innerHTML;
+	});
+
+	pi.addEventListener('click', function() {
+		result.innerHTML = 3.141592653589793;
+		k = 20;
+	});
+
+	ln.addEventListener('click', function() {
+		if(result.innerHTML > 0)
+			result.innerHTML = Math.log(result.innerHTML);
+		else
+			result.innerHTML = 'Ошибка!';
+	});
+
+	exp.addEventListener('click', function() {
+		result.innerHTML = 2.71828182845904523536;
+		k = 20;
+	});
+
+	squareRoot.addEventListener('click', function() {
+		var value = result.innerHTML;
+		if(value >= 0)
+			result.innerHTML = Math.sqrt(value);
+		else
+			result.innerHTML = 'Ошибка!';
+		r = 1;
+	});
+
+	factorial.addEventListener('click', function() {
+		var value = result.innerHTML;
+		var fctr = 1;
+		if(value == 0 || value == 1)
+			result.innerHTML = 1;
+		else if(value > 1 && Number.isInteger(Number(value)) && value <= 170) {
+			for(var i = 1; i <= value; i++) {
+				fctr *= i;
+			}
+			result.innerHTML = fctr;
+		}
+		else
+			result.innerHTML = 'Ошибка!';
+	});
+
+	opposite.addEventListener('click', function() {
+		result.innerHTML = 1 / result.innerHTML;
+		if(result.innerHTML == Infinity || isNaN(result.innerHTML) == 1)
+			result.innerHTML = 'Ошибка!';
+	});
+
+	function angle() {
+		angleValue = +result.innerHTML;
+	}
+
+	sinus.addEventListener('click', function() {
+		angle();
+		result.innerHTML = +Math.sin((angleValue).toRad()).toFixed(14);
+	});
+
+	cosinus.addEventListener('click', function() {
+		angle();
+		result.innerHTML = +Math.cos((angleValue).toRad()).toFixed(14);
+	});
+
+	tan.addEventListener('click', function() {
+		angle();
+		for(var i = 90; i <= 1000000; i += 180) {
+			if(result.innerHTML == i || result.innerHTML > 100000) {
+				result.innerHTML = 'Ошибка!';
+				return false;
+			}
+		}
+		result.innerHTML = +Math.tan((angleValue).toRad()).toFixed(14);
+		if(result.innerHTML == Infinity || result.innerHTML == -Infinity || isNaN(result.innerHTML))
+			result.innerHTML = 'Ошибка!';
+	});
+
+	ctg.addEventListener('click', function() {
+		angle();
+		for(var i = 0; i <= 1000000; i += 180) {
+			if(result.innerHTML == i || result.innerHTML > 100000) {
+				result.innerHTML = 'Ошибка!';
+				return false;
+			}
+		}
+		result.innerHTML = 1 / +Math.tan((angleValue).toRad()).toFixed(14);
+		if(result.innerHTML == Infinity || result.innerHTML == -Infinity || isNaN(result.innerHTML))
+			result.innerHTML = 'Ошибка!';
+	});
+
+	square.addEventListener('click', function() {
+		result.innerHTML *= result.innerHTML;
+	});
+
+	cube.addEventListener('click', function() {
+		result.innerHTML = Math.pow(result.innerHTML, 3);
+	});
+
+	degree.addEventListener('click', function() {
+		getResult();
+		a = result.innerHTML;
+		flagDgr = 1;
+		checkDgr = 1;
+		k = 0;
+	});
+
+	yroot.addEventListener('click', function() {
+		getResult();
+		a = result.innerHTML;
+		flagRoot = 1;
+		checkRoot = 1;
+		k = 0;
+	});
+
+	mod.addEventListener('click', function() {
+		getResult();
+		a = result.innerHTML;
+		flagMod = 1;
+		checkMod = 1;
+		k = 0;
+	});
+
+	clear.addEventListener('click', function() {
+		result.innerHTML = '0';
+		
+		checkPlus = 0; checkMinus = 0; checkMultiply = 0; checkDivide = 0, checkDgr = 0, flagMod = 0;
+		flagPlus = 0; flagMinus = 0; flagMultiply = 0; flagDivide = 0, flagDgr = 0, checkMod = 0;
+		
+		r = 0;
+		k = 0;
+	});
+
+	getLog.addEventListener('click', function() {
+		var valueB = basis.value;
+		var valueN = num.value;
+
+		if(valueB != 1 && valueB > 0 && valueN > 0) {
+			basis.style.backgroundColor = 'white';
+			basis.style.borderColor = '';
+			num.style.backgroundColor = 'white';
+			num.style.borderColor = '';
+			resLog.value = Math.log(valueN) / Math.log(valueB);
+		}
+		if(valueB == 1 || valueB <= 0) {
+			resLog.value = 'Ошибка!';
+			basis.style.backgroundColor = '#e0a2a2';
+			basis.style.borderColor = '#e37676';
+		}
+		if(valueN <= 0) {
+			resLog.value = 'Ошибка!';
+			num.style.backgroundColor = '#e0a2a2';
+			num.style.borderColor = '#e37676';
+		}
+	});
+</script>
+</html>
